@@ -32,6 +32,7 @@ Error bar for y :
     poly_fit_test_max    : Polynomial fitting of order 4 on the y_max array.
     function_plot_theory : Efficiency from the fitting on the GENIE software.
     function_plot        : Efficiency from the fitting on the experimental data.
+    this_is_a_value      : Allows us to output the y_min, y, y_max and y_theory for one value.
 '''
 
 def f(delta, ar, br): #efficiency
@@ -92,18 +93,26 @@ plt.title('Efficiency of the detector')
 plt.xlabel('$E$ in keV')
 plt.ylabel('$\epsilon$')
 plt.legend()
-print('—————————————————————-—————————————————————')
-print('efficiency ymin = '+str(poly_fit_test_min[4]+poly_fit_test_min[3]*661.7+poly_fit_test_min[2]*661.7**2+poly_fit_test_min[1]*661.7**3+poly_fit_test_min[0]*661.7**4))
-print('efficiency ymid = '+str(function_plot(661.7)))
-print('efficiency ymax = '+str(poly_fit_test_max[4]+poly_fit_test_max[3]*661.7+poly_fit_test_max[2]*661.7**2+poly_fit_test_max[1]*661.7**3+poly_fit_test_max[0]*661.7**4))
-print('efficiency theo = '+str(np.exp(function_plot_theory( np.log(661.7)))))
-print('—————————————————————-—————————————————————')
-
 plt.savefig('graphe5.png',dpi=300)
 #plt.show()
 
+this_is_a_value = 1332.501
+print(' ')
+print('—— Efficiency for E='+str(this_is_a_value)+ 'keV ——')
+print('—————————————————————-———————————————————————————————-—————————————————————')
+print('efficiency ymin = '+str(poly_fit_test_min[4]+poly_fit_test_min[3]*this_is_a_value+poly_fit_test_min[2]*this_is_a_value**2+poly_fit_test_min[1]*this_is_a_value**3+poly_fit_test_min[0]*this_is_a_value**4))
+print('efficiency ymid = '+str(function_plot(this_is_a_value)))
+print('efficiency ymax = '+str(poly_fit_test_max[4]+poly_fit_test_max[3]*this_is_a_value+poly_fit_test_max[2]*this_is_a_value**2+poly_fit_test_max[1]*this_is_a_value**3+poly_fit_test_max[0]*this_is_a_value**4))
+print('efficiency theo = '+str(np.exp(function_plot_theory( np.log(this_is_a_value)))))
+print('—————————————————————-———————————————————————————————-—————————————————————')
+print(' ')
+
+
+
 '''
     activity_from_efficiency_cesium : allows us to compute the residual activity cesium from the efficiency.
+    activity_from_efficiency_cobalt : allows us to compute the residual activity cobalt from the efficiency.
+    activity_from_efficiency_banana : allows us to compute the residual activity for time = today of the 4 bananas from their efficiency.
 '''
 def activity_from_efficiency_cesium(delta, eps, br):
     return delta/(eps*np.exp(-np.log(2)*6.008/30.08)*br*300)
@@ -111,19 +120,29 @@ def activity_from_efficiency_cesium(delta, eps, br):
 def activity_from_efficiency_cobalt(delta, eps, br):
     return delta/(eps*np.exp(-np.log(2)*6.049/(2.62e6))*br*300)
 
+def activity_from_efficiency_banana(delta, eps, br):
+    return delta/(eps*br*300)
 
-print('—————————————————————-—————————————————————')
+print('—— Cesium Cs-137 ——')
+print('—————————————————————-———————————————————————————————-—————————————————————')
 print('Residual activity from Cesium using our fit = '  +str(activity_from_efficiency_cesium(88335, 0.001023   ,0.8521))) #red curve
 print('Meaning an error of '+str(round(abs(100*(387946.0172042941-497000)/497000),2))+'%')
 print('Residual activity from Cesium using GENIE fit = '+str(activity_from_efficiency_cesium(88335, 0.00086346 ,0.8521))) #bue curve
 print('Meaning an error of '+str(round(abs(100*(459626.1269775009-497000)/497000),2))+'%')
-print('—————————————————————-—————————————————————')
+print('—————————————————————-———————————————————————————————-—————————————————————')
 
 print(' ')
-
-print('—————————————————————-—————————————————————')
+print('—— Cobalt Co-60 ——')
+print('—————————————————————-———————————————————————————————-—————————————————————')
 print('Residual activity from Cobalt using our fit = '  +str(activity_from_efficiency_cobalt(27036, 0.0005418, 0.9990)*0.9990+activity_from_efficiency_cobalt(24367, 0.0004684, 0.9988)*0.9988) ) #red curve
 print('Meaning an error of '+str(round(abs(100*(activity_from_efficiency_cobalt(27036, 0.0005418, 0.9990)*0.9990+activity_from_efficiency_cobalt(24367, 0.0004684, 0.9988)*0.9988-395000)/395000),2))+'%')
 print('Residual activity from Cobalt using GENIE fit = '+str(activity_from_efficiency_cobalt(27036, 0.0004883, 0.9990)*0.9990+activity_from_efficiency_cobalt(24367, 0.0004295, 0.9988)*0.9988)) #bue curve
 print('Meaning an error of '+str(round(abs(100*(activity_from_efficiency_cobalt(27036, 0.0004883, 0.9990)*0.9990+activity_from_efficiency_cobalt(24367, 0.0004295, 0.9988)*0.9988-395000)/395000),2))+'%')
-print('—————————————————————-—————————————————————')
+print('—————————————————————-———————————————————————————————-—————————————————————')
+
+print(' ')
+print('—— 4 Bananas ——')
+print('—————————————————————-———————————————————————————————-—————————————————————')
+print('Residual activity from 4 bananas using our fit = ' +str(activity_from_efficiency_banana(478,function_plot(1460.86),89.28)))
+print('Residual activity from 4 bananas using GENIE fit = ' +str(activity_from_efficiency_banana(478,np.exp(function_plot_theory(np.log(1460.86))),89.28)))
+print('—————————————————————-———————————————————————————————-—————————————————————')
